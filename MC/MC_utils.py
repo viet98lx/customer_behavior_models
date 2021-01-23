@@ -1,5 +1,6 @@
 import itertools
 import scipy.sparse as sp
+import re
 
 def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict):
   pair_dict = dict()
