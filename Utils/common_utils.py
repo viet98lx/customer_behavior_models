@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 ################## utils and build knowledge about data ###################
 
-def build_knowledge(training_instances, validate_instances):
+def build_knowledge(training_instances, validate_instances=None):
     MAX_SEQ_LENGTH = 0
     item_freq_dict = {}
 
@@ -31,26 +31,26 @@ def build_knowledge(training_instances, validate_instances):
                     item_freq_dict[item_obs] = 1
                 else:
                     item_freq_dict[item_obs] += 1
+    if (validate_instances is not None):
+        for line in validate_instances:
+            elements = line.split("|")
 
-    for line in validate_instances:
-        elements = line.split("|")
+            if len(elements) - 1 > MAX_SEQ_LENGTH:
+                MAX_SEQ_LENGTH = len(basket_seq) - 1
 
-        if len(elements) - 1 > MAX_SEQ_LENGTH:
-            MAX_SEQ_LENGTH = len(basket_seq) - 1
+            label = int(elements[0])
+            if label != 1 and len(elements) == 3:
+                basket_seq = elements[1:]
+            else:
+                basket_seq = [elements[-1]]
 
-        label = int(elements[0])
-        if label != 1 and len(elements) == 3:
-            basket_seq = elements[1:]
-        else:
-            basket_seq = [elements[-1]]
-
-        for basket in basket_seq:
-            item_list = re.split('[\\s]+', basket)
-            for item_obs in item_list:
-                if item_obs not in item_freq_dict:
-                    item_freq_dict[item_obs] = 1
-                else:
-                    item_freq_dict[item_obs] += 1
+            for basket in basket_seq:
+                item_list = re.split('[\\s]+', basket)
+                for item_obs in item_list:
+                    if item_obs not in item_freq_dict:
+                        item_freq_dict[item_obs] = 1
+                    else:
+                        item_freq_dict[item_obs] += 1
 
     items = sorted(list(item_freq_dict.keys()))
     item_dict = dict()
