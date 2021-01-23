@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 ################## utils and build knowledge about data ###################
 
-def build_knowledge(training_instances, validate_instances=None):
+def build_knowledge(training_instances, validate_instances = False):
     MAX_SEQ_LENGTH = 0
     item_freq_dict = {}
 
@@ -31,7 +31,8 @@ def build_knowledge(training_instances, validate_instances=None):
                     item_freq_dict[item_obs] = 1
                 else:
                     item_freq_dict[item_obs] += 1
-    if (validate_instances is not None):
+
+    if (validate_instances != False):
         for line in validate_instances:
             elements = line.split("|")
 
