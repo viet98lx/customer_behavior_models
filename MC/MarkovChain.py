@@ -1,4 +1,5 @@
 import scipy.sparse as sp
+import numpy as np
 
 class MarkovChain():
   def __init__(self, item_dict, reversed_item_dict, item_freq_dict, sp_matrix_path):
@@ -10,14 +11,10 @@ class MarkovChain():
     self.transition_matrix = sp.load_npz(self.sp_matrix_path)
 
   def top_predicted_item(self, previous_basket, topk):
-    candidate = [0 for _ in range(self.nb_item)]
+    # candidate = np.zeros(self.nb_items)
     prev_basket_idx = [self.item_dict[item] for item in previous_basket]
-    for i in range(self.nb_items):
-      score = 0
-      for prev_idx in prev_basket_idx:
-        score += self.transition_matrix[prev_idx, i]
-      score = score / len(prev_basket_idx)
-      candidate[i] = score
+    candidate = self.transition_matrix[prev_basket_idx].toarray().sum(axis=0)
+    candidate = candidate / len(prev_basket_idx)
     topk_idx = np.argpartition(candidate, -topk)[-topk:]
     topk_item = [self.reversed_item_dict[item] for item in topk_idx]
     return topk_item
