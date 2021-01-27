@@ -74,6 +74,8 @@ def data_to_3_list(data_instances, item_dict, user_dict, reversed_item_dict):
     data_list = []
     for line in data_instances:
         elements = line.split('|')
+        # print(item_dict)
+        # print(elements)
         user = elements[0]
         user_idx = user_dict[user]
         prev_basket = [item_dict[item] for item in re.split('[\\s]+', elements[1].strip())]

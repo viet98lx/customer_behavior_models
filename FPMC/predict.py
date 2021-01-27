@@ -2,6 +2,7 @@ import sys, os, pickle, argparse
 import re
 import fpmc_utils
 import fpmc
+import random
 # sys.path.append(os.path.abspath(os.path.join('..', 'data')))
 sys.path.append('..')
 
@@ -18,6 +19,8 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--n_factor', help='dimension of factorization', type=int, default=16)
     parser.add_argument('-l', '--lr', help='learning rate', type=float, default=0.01)
     parser.add_argument('-r', '--regular', help='regularization', type=float, default=0.001)
+    parser.add_argument('--nb_predict', help='# of predict', type=int, default=10)
+    parser.add_argument('--topk', help='# of predict', type=int, default=10)
     args = parser.parse_args()
 
     f_dir = args.input_dir
@@ -28,6 +31,8 @@ if __name__ == '__main__':
     regular = args.regular
     o_dir = args.output_dir
     model_name = args.model_name
+    nb_predict = args.nb_predict
+    topk = args.topk
 
     data_dir = f_dir
     train_instances, test_instances = fpmc_utils.load_data_from_dir(data_dir)
@@ -47,7 +52,17 @@ if __name__ == '__main__':
     # fpmc.user_set = user_set
     # fpmc.item_set = item_set
     fpmc.init_model()
+    load_file = os.path.join(o_dir, model_name)
+    fpmc.load(load_file)
     if not os.path.exists(o_dir):
         os.makedirs(o_dir)
-    fpmc.learnSBPR_FPMC(train_data_list, o_dir, model_name, test_data_list, n_epoch=epoch,
-                                    neg_batch_size=n_neg, eval_per_epoch=True)
+
+    for i in random.sample(test_data_list, nb_predict):
+        (u, b_tm1, target_basket) = i
+        idx = fpmc.top_k_recommendations(i, topk)
+        correct_set = set(idx).intersection(set(target_basket))
+        print("Ground truth: ", target_basket)
+        print("Nb_correct: ", len(correct_set))
+        print("Predict topk: ", idx)
+        print("Items correct: ", list(correct_set))
+        print()

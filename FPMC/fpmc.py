@@ -86,7 +86,11 @@ class FPMC():
         list_recall = []
         for u, b_tm1, target_basket in data_list:
             idx = self.top_k_recommendations((u, b_tm1, target_basket), topk)
-            correct = len(set(idx).intersection(set(target_basket)))
+            correct_set = set(idx).intersection(set(target_basket))
+            # for item in correct_set:
+            #     print(self.reversed_item_dict[item], ' ')
+            correct = len(correct_set)
+            # print()
             list_recall.append(correct / len(target_basket))
         # find top k according to output
         return np.mean(np.array(list_recall), axis=0)
@@ -126,7 +130,7 @@ class FPMC():
                 self.VIL[j] += VILj_update
                 self.VLI[b_tm1] += VLI_update
 
-    def learnSBPR_FPMC(self, tr_data, model_name, te_data=None, n_epoch=10, neg_batch_size=10, eval_per_epoch=False):
+    def learnSBPR_FPMC(self, tr_data, output_dir, model_name, te_data=None, n_epoch=10, neg_batch_size=10, eval_per_epoch=False):
         max_recall = 0
         for epoch in range(n_epoch):
             print('Start epoch: ', epoch)
@@ -137,7 +141,7 @@ class FPMC():
                 if (recall_topk > max_recall):
                     print("Recall increase from %.6f to %.6f" % (max_recall, recall_topk))
                     max_recall = recall_topk
-                    filename = model_name + '_best_epoch_' + str(epoch) + '.npz'
+                    filename = output_dir + model_name + '_best_epoch_' + str(epoch) + '.npz'
                     self.save(filename)
                 print('epoch %d done' % epoch)
             else:
