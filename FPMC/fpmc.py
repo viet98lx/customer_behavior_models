@@ -6,6 +6,7 @@ from random import shuffle
 import numpy as np
 import fpmc_utils
 import re
+import matplotlib.pyplot as plt
 
 
 class FPMC():
@@ -58,14 +59,15 @@ class FPMC():
 
     def compute_x(self, u, i, b_tm1):
         acc_val = 0.0
-        # for l in b_tm1:
-        #     acc_val += np.dot(self.VIL[i], self.VLI[l])
-        acc_val = np.mean(np.dot(self.VIL[i], self.VLI[b_tm1].T), axis=0)
-        # return (np.dot(self.VUI[u], self.VIU[i]) + (acc_val / len(b_tm1)))
-        return (np.dot(self.VUI[u], self.VIU[i]) + (acc_val))
+        for l in b_tm1:
+            acc_val += np.dot(self.VIL[i], self.VLI[l])
+        # acc_val = np.mean(np.dot(self.VIL[i], self.VLI[b_tm1].T), axis=0)
+        return (np.dot(self.VUI[u], self.VIU[i]) + (acc_val / len(b_tm1)))
+        # return (np.dot(self.VUI[u], self.VIU[i]) + (acc_val))
 
     def predict_next_item_score(self, u, b_tm1):
         rank_score = np.dot(self.VUI[u], self.VIU.T) + np.mean(np.dot(self.VIL, self.VLI[b_tm1].T), axis=1)
+        # print(rank_score)
         return rank_score
 
     def top_k_recommendations(self, sample, topk=10):
@@ -73,7 +75,7 @@ class FPMC():
         '''
         u, b_tm1, target_basket = sample[0], sample[1], sample[2]
         score = self.predict_next_item_score(u, b_tm1)
-        idx = list(np.argpartition(score, -topk)[-topk:])
+        idx = np.argpartition(score, -topk)[-topk:]
 
         # find top k according to output
         # return np.mean(np.array(list_recall), axis=0)
@@ -90,17 +92,18 @@ class FPMC():
             # print()
             list_recall.append(correct / len(target_basket))
         # find top k according to output
-        return np.mean(np.array(list_recall), axis=0)
+        return np.array(list_recall).mean()
 
     def evaluation(self, data_list, topk):
         recall = self.compute_recall(data_list, topk)
         return recall
 
     def learn_epoch(self, tr_data, neg_batch_size):
+        avg_loss = []
         for iter_idx in range(len(tr_data)):
             (u, b_tm1, target_basket) = random.choice(tr_data)
             # (u, b_tm1, target_basket) = tr_data[iter_idx]
-
+            loss = 0
             exclu_set = self.item_set - set(target_basket)
             j_list = random.sample(exclu_set, neg_batch_size)
             i = target_basket[0]
@@ -108,6 +111,7 @@ class FPMC():
             for j in j_list:
                 z2 = self.compute_x(u, j, b_tm1)
                 delta = 1 - fpmc_utils.sigmoid(z1 - z2)
+                loss += delta
 
                 VUI_update = self.learn_rate * (delta * (self.VIU[i] - self.VIU[j]) - self.regular * self.VUI[u])
                 VIUi_update = self.learn_rate * (delta * self.VUI[u] - self.regular * self.VIU[i])
@@ -126,21 +130,31 @@ class FPMC():
                 self.VIL[i] += VILi_update
                 self.VIL[j] += VILj_update
                 self.VLI[b_tm1] += VLI_update
+            avg_loss.append(loss)
+        return np.array(avg_loss).mean()
 
     def learnSBPR_FPMC(self, tr_data, output_dir, model_name, te_data=None, n_epoch=10, neg_batch_size=10, eval_per_epoch=False):
         max_recall = 0
+        losses = []
         for epoch in range(n_epoch):
             print('Start epoch: ', epoch)
             shuffle(tr_data)
-            self.learn_epoch(tr_data, neg_batch_size=neg_batch_size)
+            loss = self.learn_epoch(tr_data, neg_batch_size=neg_batch_size)
+            losses.append(loss)
             if eval_per_epoch == True:
-                recall_topk = self.evaluation(te_data, 10)
+                recall_test = self.evaluation(te_data, 10)
                 recall_train = self.evaluation(tr_data, 10)
-                if (recall_topk > max_recall):
-                    print("Recall increase from %.6f to %.6f" % (max_recall, recall_topk))
-                    max_recall = recall_topk
+                print("Recall train: ", recall_train)
+                print("Recall test: ", recall_test)
+                if (recall_test > max_recall):
+                    print("Recall increase from %.6f to %.6f" % (max_recall, recall_test))
+                    max_recall = recall_test
                     filename = output_dir + model_name + '_best_epoch_' + str(epoch) + '.npz'
                     self.save(filename)
                 print('epoch %d done' % epoch)
             else:
                 print('epoch %d done' % epoch)
+        epoch = range(1, len(losses)+1)
+        plt.plot(epoch,losses, 'b-')
+        plt.savefig('Loss.png')
+        plt.show()
