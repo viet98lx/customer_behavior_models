@@ -18,5 +18,5 @@ class MarkovChain():
     candidate = candidate / len(prev_basket_idx)
     topk_idx = np.argpartition(candidate, -topk)[-topk:]
     topk_item = [self.reversed_item_dict[item] for item in topk_idx]
-    print("Done")
+    # print("Done")
     return topk_item
