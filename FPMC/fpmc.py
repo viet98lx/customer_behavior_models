@@ -97,8 +97,8 @@ class FPMC():
 
     def learn_epoch(self, tr_data, neg_batch_size):
         for iter_idx in range(len(tr_data)):
-            # (u, b_tm1, target_basket) = random.choice(tr_data)
-            (u, b_tm1, target_basket) = tr_data[iter_idx]
+            (u, b_tm1, target_basket) = random.choice(tr_data)
+            # (u, b_tm1, target_basket) = tr_data[iter_idx]
 
             exclu_set = self.item_set - set(target_basket)
             j_list = random.sample(exclu_set, neg_batch_size)
