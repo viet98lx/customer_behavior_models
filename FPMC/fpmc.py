@@ -129,6 +129,7 @@ class FPMC():
     def learnSBPR_FPMC(self, tr_data, te_data=None, n_epoch=10, neg_batch_size=10, eval_per_epoch=False):
         max_recall = 0
         for epoch in range(n_epoch):
+            print('Start epoch: ', epoch)
             shuffle(tr_data)
             self.learn_epoch(tr_data, neg_batch_size=neg_batch_size)
 
