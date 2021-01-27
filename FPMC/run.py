@@ -2,7 +2,8 @@ import sys, os, pickle, argparse
 import re
 import fpmc_utils
 import fpmc
-sys.path.append(os.path.abspath(os.path.join('..', 'data')))
+# sys.path.append(os.path.abspath(os.path.join('..', 'data')))
+sys.path.append('..')
 
 
 # from FPMC import FPMC

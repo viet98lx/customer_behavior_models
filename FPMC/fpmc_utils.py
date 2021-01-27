@@ -1,11 +1,11 @@
 import csv, math
 import numpy as np
 import sys, os, pickle, time
-sys.path.append(os.path.abspath(os.path.join('..', 'Utils')))
+# sys.path.append(os.path.abspath(os.path.join('..', 'Utils')))
 import math, random
 from random import shuffle
 import numpy as np
-from Utils import common_utils
+# from Utils import common_utils
 import re
 
 
@@ -55,11 +55,16 @@ def build_knowledge(training_instances):
     reversed_item_dict = dict(zip(item_dict.values(), item_dict.keys()))
     return MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict
 
+def read_instances_lines_from_file(file_path):
+    with open(file_path, "r") as f:
+        lines = [line.rstrip('\n') for line in f]
+        return lines
+
 def load_data_from_dir(dirname):
     train_data_path = dirname + '/' + 'train_lines.txt'
     test_data_path = dirname + '/' + 'test_lines.txt'
-    train_instances = common_utils.read_instances_lines_from_file(train_data_path)
-    test_instances = common_utils.read_instances_lines_from_file(test_data_path)
+    train_instances = read_instances_lines_from_file(train_data_path)
+    test_instances = read_instances_lines_from_file(test_data_path)
     # train_instances = read_instances_lines_from_file(train_data_path)
     # test_instances = read_instances_lines_from_file(test_data_path)
     return train_instances, test_instances

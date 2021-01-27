@@ -5,6 +5,8 @@ import os, re
 import itertools
 import matplotlib
 import matplotlib.pyplot as plt
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('..', 'data')))
 
 
 ################## utils and build knowledge about data ###################
