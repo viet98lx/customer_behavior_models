@@ -25,7 +25,7 @@ def MC_hit_ratio(test_instances, topk, MC_model):
         if num_correct > 0 and user not in user_correct:
             hit_count += 1
             user_correct.add(user)
-    return hit_count / len(test_instances)
+    return hit_count / len(user_dict)
 
 
 def MC_recall(test_instances, topk, MC_model):
