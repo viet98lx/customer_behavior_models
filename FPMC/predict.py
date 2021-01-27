@@ -60,9 +60,11 @@ if __name__ == '__main__':
     for i in random.sample(test_data_list, nb_predict):
         (u, b_tm1, target_basket) = i
         idx = fpmc.top_k_recommendations(i, topk)
-        correct_set = set(idx).intersection(set(target_basket))
-        print("Ground truth: ", target_basket)
+        topk_item = [reversed_item_dict[i] for i in idx]
+        target_item = [reversed_item_dict[i] for i in target_basket]
+        correct_set = set(topk_item).intersection(set(target_item))
+        print("Ground truth: ", target_item)
         print("Nb_correct: ", len(correct_set))
-        print("Predict topk: ", idx)
+        print("Predict topk: ", topk_item)
         print("Items correct: ", list(correct_set))
         print()

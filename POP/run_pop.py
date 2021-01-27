@@ -1,10 +1,10 @@
-import glob, os
-import pandas as pd
+import sys, os
 import re
 import numpy as np
-import scipy.sparse as sp
-from Utils import common_utils
+import utils
 import POP
+import argparse
+from POP import POP
 
 def build_knowledge(training_instances):
     MAX_SEQ_LENGTH = 0
@@ -47,16 +47,21 @@ def build_knowledge(training_instances):
 def POP_hit_ratio(test_instances, topk, pop_model):
     list_predict_item = pop_model.top_popular_item(topk)
     hit_count = 0
+    user_dict = dict()
+    user_correct = set()
     for line in test_instances:
         elements = line.split("|")
         user = elements[0]
+        if user not in user_dict:
+            user_dict[user] = len(user_dict)
         basket_seq = elements[1:]
         last_basket = basket_seq[-1]
         item_list = re.split('[\\s]+', last_basket.strip())
         num_correct = len(set(item_list).intersection(list_predict_item))
-        if num_correct > 0:
+        if num_correct > 0 and user not in user_correct:
             hit_count += 1
-    return hit_count / len(test_instances)
+            user_correct.add(user)
+    return hit_count / len(user_dict)
 
 
 def POP_recall(test_instances, topk, pop_model):
@@ -78,13 +83,23 @@ def POP_recall(test_instances, topk, pop_model):
     return np.array(list_recall).mean()
 
 if __name__ == '__main__':
-    train_data_path = 'train_lines.txt'
-    train_instances = common_utils.read_instances_lines_from_file(train_data_path)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input_dir', help='The directory of input', type=str, default='../data/')
+    parser.add_argument('--output_dir', help='The directory of output', type=str, default='../saved_models/')
+    parser.add_argument('--model_name', help='Model name ', type=str, default='fpmc')
+    args = parser.parse_args()
+
+    data_dir = args.input_dir
+    o_dir = args.output_dir
+    model_name = args.model_name
+
+    train_data_path = data_dir+'train_lines.txt'
+    train_instances = utils.read_instances_lines_from_file(train_data_path)
     nb_train = len(train_instances)
     print(nb_train)
 
-    test_data_path = 'test_lines.txt'
-    test_instances = common_utils.read_instances_lines_from_file(test_data_path)
+    test_data_path = data_dir+'test_lines.txt'
+    test_instances = utils.read_instances_lines_from_file(test_data_path)
     nb_test = len(test_instances)
     print(nb_test)
 
@@ -93,7 +108,12 @@ if __name__ == '__main__':
     print("---------------------@Build knowledge-------------------------------")
     MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = build_knowledge(train_instances)
     pop_model = POP(item_dict, reversed_item_dict, item_probs)
-    for topk in [5, 10, 20]:
+    if not os.path.exists(o_dir):
+        os.makedirs(o_dir)
+    saved_file = os.path.join(o_dir, model_name)
+    print("Save model in ", saved_file)
+    np.savez(saved_file, item_probs= pop_model.list_pop)
+    for topk in [5,10,15]:
         print("Top : ", topk)
         hit_rate = POP_hit_ratio(test_instances, topk, pop_model)
         recall = POP_recall(test_instances, topk, pop_model)

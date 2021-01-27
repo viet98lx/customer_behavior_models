@@ -10,4 +10,5 @@ class POP:
   def top_popular_item(self, topk):
     topk_idx = np.argpartition(self.list_pop, -topk)[-topk:]
     topk_item = [self.reversed_item_dict[item] for item in topk_idx]
+
     return topk_item
