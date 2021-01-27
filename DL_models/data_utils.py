@@ -50,7 +50,7 @@ def seq_generator(raw_lines, item_dict):
             s.append(id_list)
         S.append(s)
 
-    return {'S': np.asarray(S), 'L': np.asarray(L), 'Y': np.asarray(Y), 'O': np.asarray(O)}
+    return {'S': np.asarray(S,dtype='int32'), 'L': np.asarray(L,dtype='int32'), 'Y': np.asarray(Y, dtype='int32'), 'O': np.asarray(O)}
 
 
 def get_sparse_tensor_info(x, is_bseq=False):
