@@ -11,6 +11,8 @@ sys.path.append('..')
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', help='The directory of input', type=str, default='data/')
+    parser.add_argument('--out_dir', help='The directory of output', type=str, default='data/')
+    parser.add_argument('--model_name', help='Model name ', type=str, default='fpmc')
     parser.add_argument('-e', '--n_epoch', help='# of epoch', type=int, default=10)
     parser.add_argument('--n_neg', help='# of neg samples', type=int, default=10)
     parser.add_argument('-n', '--n_factor', help='dimension of factorization', type=int, default=16)
@@ -24,6 +26,8 @@ if __name__ == '__main__':
     n_factor = args.n_factor
     learn_rate = args.lr
     regular = args.regular
+    o_dir = args.out_dir
+    model_name = args.model_name
 
     data_dir = f_dir
     train_instances, test_instances = fpmc_utils.load_data_from_dir(data_dir)
@@ -43,5 +47,5 @@ if __name__ == '__main__':
     # fpmc.user_set = user_set
     # fpmc.item_set = item_set
     fpmc.init_model()
-    fpmc.learnSBPR_FPMC(train_data_list, test_data_list, n_epoch=epoch,
+    fpmc.learnSBPR_FPMC(train_data_list, model_name, test_data_list, n_epoch=epoch,
                                     neg_batch_size=n_neg, eval_per_epoch=True)

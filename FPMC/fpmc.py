@@ -126,19 +126,18 @@ class FPMC():
                 self.VIL[j] += VILj_update
                 self.VLI[b_tm1] += VLI_update
 
-    def learnSBPR_FPMC(self, tr_data, te_data=None, n_epoch=10, neg_batch_size=10, eval_per_epoch=False):
+    def learnSBPR_FPMC(self, tr_data, model_name, te_data=None, n_epoch=10, neg_batch_size=10, eval_per_epoch=False):
         max_recall = 0
         for epoch in range(n_epoch):
             print('Start epoch: ', epoch)
             shuffle(tr_data)
             self.learn_epoch(tr_data, neg_batch_size=neg_batch_size)
-
             if eval_per_epoch == True:
                 recall_topk = self.evaluation(te_data, 10)
                 if (recall_topk > max_recall):
                     print("Recall increase from %.6f to %.6f" % (max_recall, recall_topk))
                     max_recall = recall_topk
-                    filename = 'best_epoch_' + str(epoch) + '.npz'
+                    filename = model_name + '_best_epoch_' + str(epoch) + '.npz'
                     self.save(filename)
                 print('epoch %d done' % epoch)
             else:
