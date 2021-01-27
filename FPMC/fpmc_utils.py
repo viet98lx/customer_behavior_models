@@ -8,10 +8,7 @@ import re
 
 def sigmoid(x):
     x = min(10, max(-10, x))
-    if x >= 0:
-        return math.exp(-np.logaddexp(0, -x))
-    else:
-        return math.exp(x - np.logaddexp(x, 0))
+    return 1 / (1 + math.exp(-x))
 
 
 def build_knowledge(training_instances):
