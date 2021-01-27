@@ -38,10 +38,6 @@ if __name__ == '__main__':
     # shuffle(train_data_list)
     test_data_list = fpmc_utils.data_to_3_list(test_instances, item_dict, user_dict, reversed_item_dict)
 
-    # train_ratio = 0.8
-    # split_idx = int(len(data_list) * train_ratio)
-    # tr_data = data_list[:split_idx]
-    # te_data = data_list[split_idx:]
     fpmc = fpmc.FPMC(item_dict = item_dict, user_dict = user_dict, reversed_item_dict = reversed_item_dict,
                 n_factor= n_factor, learn_rate=learn_rate, regular=regular)
     # fpmc.user_set = user_set

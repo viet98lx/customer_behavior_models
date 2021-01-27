@@ -72,9 +72,6 @@ class FPMC():
         ''' Recieves a sequence of (id, rating), and produces k recommendations (as a list of ids)
         '''
         u, b_tm1, target_basket = sample[0], sample[1], sample[2]
-        # print(u)
-        # print(b_tm1)
-        # print(target_basket)
         score = self.predict_next_item_score(u, b_tm1)
         idx = list(np.argpartition(score, -topk)[-topk:])
 
@@ -138,6 +135,7 @@ class FPMC():
             self.learn_epoch(tr_data, neg_batch_size=neg_batch_size)
             if eval_per_epoch == True:
                 recall_topk = self.evaluation(te_data, 10)
+                recall_train = self.evaluation(tr_data, 10)
                 if (recall_topk > max_recall):
                     print("Recall increase from %.6f to %.6f" % (max_recall, recall_topk))
                     max_recall = recall_topk
