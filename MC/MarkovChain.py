@@ -14,7 +14,7 @@ class MarkovChain():
     candidate = np.zeros(self.nb_items)
     prev_basket_idx = [self.item_dict[item] for item in previous_basket]
     # for item_idx in prev_basket_idx:
-    candidate = self.transition_matrix[prev_basket_idx,:].todense().sum(axis=0)
+    candidate = np.array(self.transition_matrix[prev_basket_idx,:].todense().sum(axis=0))[0]
     candidate = candidate / len(prev_basket_idx)
     topk_idx = np.argpartition(candidate, -topk)[-topk:]
     topk_item = [self.reversed_item_dict[item] for item in topk_idx]
