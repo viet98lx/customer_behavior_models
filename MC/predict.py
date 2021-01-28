@@ -44,9 +44,9 @@ if __name__ == '__main__':
 
     for i in random.sample(test_instances, nb_predict):
         elements = i.split('|')
-        basket = elements[2]
-        prev_basket = [item for item in re.split('[\\s]+',elements[2].strip())]
-        target_basket = [item for item in re.split('[\\s]+',basket.strip())]
+        b_seq = elements[1:]
+        prev_basket = [item for item in re.split('[\\s]+',b_seq[-2].strip())]
+        target_basket = [item for item in re.split('[\\s]+',b_seq[-1].strip())]
         topk_item = mc_model.top_predicted_item(prev_basket, topk)
         correct_set = set(topk_item).intersection(set(target_basket))
         print("Input basket: ", prev_basket)
