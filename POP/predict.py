@@ -13,6 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', help='Model name ', type=str, default='fpmc')
     parser.add_argument('--nb_predict', help='# of predict', type=int, default=10)
     parser.add_argument('--topk', help='# of predict', type=int, default=10)
+    parser.add_argument('--example_file', help='Example_file', type=str, default=None)
     args = parser.parse_args()
 
     f_dir = args.input_dir
@@ -20,6 +21,7 @@ if __name__ == '__main__':
     model_name = args.model_name
     nb_predict = args.nb_predict
     topk = args.topk
+    ex_file = args.example_file
 
     data_dir = f_dir
     train_data_path = data_dir + 'train_lines.txt'
@@ -31,7 +33,7 @@ if __name__ == '__main__':
     test_instances = utils.read_instances_lines_from_file(test_data_path)
     nb_test = len(test_instances)
     # print(nb_test)
-    print("---------------------@Build knowledge-------------------------------")
+    # print("---------------------@Build knowledge-------------------------------")
     MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = utils.build_knowledge(train_instances + test_instances)
 
     if not os.path.exists(o_dir):
@@ -43,7 +45,11 @@ if __name__ == '__main__':
     # print(item_probs)
     pop_model = POP(item_dict, reversed_item_dict, item_probs)
 
-    for i in random.sample(test_instances, nb_predict):
+    if ex_file is not None:
+        ex_instances = utils.read_instances_lines_from_file(ex_file)
+    else :
+        ex_instances = test_instances
+    for i in random.sample(ex_instances, nb_predict):
         basket = i.split('|')[2]
         target_basket = [item for item in re.split('[\\s]+',basket.strip())]
         topk_item = pop_model.top_popular_item(topk)

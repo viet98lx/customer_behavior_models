@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--regular', help='regularization', type=float, default=0.001)
     parser.add_argument('--nb_predict', help='# of predict', type=int, default=10)
     parser.add_argument('--topk', help='# of predict', type=int, default=10)
+    parser.add_argument('--example_file', help='Example_file', type=str, default=None)
     args = parser.parse_args()
 
     f_dir = args.input_dir
@@ -33,6 +34,7 @@ if __name__ == '__main__':
     model_name = args.model_name
     nb_predict = args.nb_predict
     topk = args.topk
+    ex_file = args.example_file
 
     data_dir = f_dir
     train_instances, test_instances = fpmc_utils.load_data_from_dir(data_dir)
@@ -54,10 +56,12 @@ if __name__ == '__main__':
     fpmc.init_model()
     load_file = os.path.join(o_dir, model_name)
     fpmc.load(load_file)
-    if not os.path.exists(o_dir):
-        os.makedirs(o_dir)
 
-    for i in random.sample(test_data_list, nb_predict):
+    if ex_file is not None:
+        ex_instances = fpmc_utils.read_instances_lines_from_file(ex_file)
+    else :
+        ex_instances = test_instances
+    for i in random.sample(ex_instances, nb_predict):
         (u, b_tm1, target_basket) = i
         idx = fpmc.top_k_recommendations(i, topk)
         topk_item = [reversed_item_dict[i] for i in idx]
