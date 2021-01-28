@@ -47,21 +47,20 @@ def build_knowledge(training_instances):
 def POP_hit_ratio(test_instances, topk, pop_model):
     list_predict_item = pop_model.top_popular_item(topk)
     hit_count = 0
-    user_dict = dict()
-    user_correct = set()
+    # user_dict = dict()
+    # user_correct = set()
     for line in test_instances:
         elements = line.split("|")
-        user = elements[0]
-        if user not in user_dict:
-            user_dict[user] = len(user_dict)
+        # user = elements[0]
+        # if user not in user_dict:
+        #     user_dict[user] = len(user_dict)
         basket_seq = elements[1:]
         last_basket = basket_seq[-1]
         item_list = re.split('[\\s]+', last_basket.strip())
         num_correct = len(set(item_list).intersection(list_predict_item))
-        if num_correct > 0 and user not in user_correct:
-            hit_count += 1
-            user_correct.add(user)
-    return hit_count / len(user_dict)
+        hit_count += 1
+            # user_correct.add(user)
+    return hit_count / len(test_instances)
 
 
 def POP_recall(test_instances, topk, pop_model):

@@ -8,13 +8,13 @@ import os
 
 def MC_hit_ratio(test_instances, topk, MC_model):
     hit_count = 0
-    user_correct = set()
-    user_dict = dict()
+    # user_correct = set()
+    # user_dict = dict()
     for line in test_instances:
         elements = line.split("|")
-        user = elements[0]
-        if user not in user_dict:
-            user_dict[user] = len(user_dict)
+        # user = elements[0]
+        # if user not in user_dict:
+        #     user_dict[user] = len(user_dict)
         basket_seq = elements[1:]
         last_basket = basket_seq[-1]
         prev_basket = basket_seq[-2]
@@ -22,10 +22,10 @@ def MC_hit_ratio(test_instances, topk, MC_model):
         list_predict_item = MC_model.top_predicted_item(prev_item_idx, topk)
         item_list = re.split('[\\s]+', last_basket.strip())
         num_correct = len(set(item_list).intersection(list_predict_item))
-        if num_correct > 0 and user not in user_correct:
-            hit_count += 1
-            user_correct.add(user)
-    return hit_count / len(user_dict)
+        # if num_correct > 0 and user not in user_correct:
+        hit_count += 1
+            # user_correct.add(user)
+    return hit_count / len(test_instances)
 
 
 def MC_recall(test_instances, topk, MC_model):
