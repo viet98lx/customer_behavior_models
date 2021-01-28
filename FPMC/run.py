@@ -34,8 +34,8 @@ if __name__ == '__main__':
     data_dir = f_dir
     train_instances, test_instances = fpmc_utils.load_data_from_dir(data_dir)
     if toy_split < 1:
-        train_split = toy_split*len(train_instances)
-        test_split = toy_split*len(test_instances)
+        train_split = int(toy_split*len(train_instances))
+        test_split = int(toy_split*len(test_instances))
         train_instances, test_instances = train_instances[:train_split], test_instances[:test_split]
 
     print("---------------------@Build knowledge-------------------------------")
