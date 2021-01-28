@@ -61,8 +61,10 @@ if __name__ == '__main__':
         (u, b_tm1, target_basket) = i
         idx = fpmc.top_k_recommendations(i, topk)
         topk_item = [reversed_item_dict[i] for i in idx]
+        prev_item = [reversed_item_dict[i] for i in b_tm1]
         target_item = [reversed_item_dict[i] for i in target_basket]
         correct_set = set(topk_item).intersection(set(target_item))
+        print("Input basket: ", prev_item)
         print("Ground truth: ", target_item)
         print("Nb_correct: ", len(correct_set))
         print("Predict topk: ", topk_item)

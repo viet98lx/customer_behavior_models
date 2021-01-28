@@ -49,6 +49,7 @@ if __name__ == '__main__':
         target_basket = [item for item in re.split('[\\s]+',basket.strip())]
         topk_item = mc_model.top_predicted_item(prev_basket, topk)
         correct_set = set(topk_item).intersection(set(target_basket))
+        print("Input basket: ", prev_basket)
         print("Ground truth: ", target_basket)
         print("Nb_correct: ", len(correct_set))
         print("Predict topk: ", topk_item)
