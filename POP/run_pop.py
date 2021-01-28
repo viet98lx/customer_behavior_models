@@ -58,7 +58,8 @@ def POP_hit_ratio(test_instances, topk, pop_model):
         last_basket = basket_seq[-1]
         item_list = re.split('[\\s]+', last_basket.strip())
         num_correct = len(set(item_list).intersection(list_predict_item))
-        hit_count += 1
+        if num_correct > 0:
+            hit_count += 1
             # user_correct.add(user)
     return hit_count / len(test_instances)
 

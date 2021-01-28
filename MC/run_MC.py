@@ -22,8 +22,8 @@ def MC_hit_ratio(test_instances, topk, MC_model):
         list_predict_item = MC_model.top_predicted_item(prev_item_idx, topk)
         item_list = re.split('[\\s]+', last_basket.strip())
         num_correct = len(set(item_list).intersection(list_predict_item))
-        # if num_correct > 0 and user not in user_correct:
-        hit_count += 1
+        if num_correct > 0 :
+            hit_count += 1
             # user_correct.add(user)
     return hit_count / len(test_instances)
 
