@@ -18,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--n_factor', help='dimension of factorization', type=int, default=16)
     parser.add_argument('-l', '--lr', help='learning rate', type=float, default=0.01)
     parser.add_argument('-r', '--regular', help='regularization', type=float, default=0.001)
+    parser.add_argument('-t', '--toy_split', help='toy_split', type=float, default=1)
     args = parser.parse_args()
 
     f_dir = args.input_dir
@@ -28,9 +29,15 @@ if __name__ == '__main__':
     regular = args.regular
     o_dir = args.output_dir
     model_name = args.model_name
+    toy_split = args.toy_split
 
     data_dir = f_dir
     train_instances, test_instances = fpmc_utils.load_data_from_dir(data_dir)
+    if toy_split < 1:
+        train_split = toy_split*len(train_instances)
+        test_split = toy_split*len(test_instances)
+        train_instances, test_instances = train_instances[:train_split], test_instances[:test_split]
+
     print("---------------------@Build knowledge-------------------------------")
     MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = fpmc_utils.build_knowledge(train_instances + test_instances)
 
