@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--load_file', help='Load file name ', type=str, default='W_H')
     parser.add_argument('--nb_predict', help='# of predict', type=int, default=10)
     parser.add_argument('--topk', help='# of predict', type=int, default=10)
+    parser.add_argument('--n_factor', help='# of factor', type=int, default=4)
     parser.add_argument('--example_file', help='Example_file', type=str, default=None)
     args = parser.parse_args()
 
@@ -25,6 +26,7 @@ if __name__ == '__main__':
     load_file = args.load_file
     topk = args.topk
     ex_file = args.example_file
+    n_factor = args.n_factor
 
     data_dir = f_dir
     train_data_path = data_dir + 'train_lines.txt'
@@ -44,7 +46,7 @@ if __name__ == '__main__':
     # saved_file = os.path.join(o_dir, 'transition_matrix_MC.npz')
     # print("Save model in ", saved_file)
     # H = np.load_npz(saved_file)
-    fmc_model = FMC(item_dict, reversed_item_dict, item_freq_dict)
+    fmc_model = FMC(item_dict, reversed_item_dict, item_freq_dict, n_factor)
     fmc_model.load(load_file)
 
     if ex_file is not None:

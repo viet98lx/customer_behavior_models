@@ -12,6 +12,7 @@ if __name__ == '__main__':
     parser.add_argument('--input_dir', help='The directory of input', type=str, default='../data/')
     parser.add_argument('--output_dir', help='The directory of output', type=str, default='../saved_models/')
     parser.add_argument('--model_name', help='Model name ', type=str, default='fpmc')
+    parser.add_argument('--n_factor', help='# of factor', type=int, default=4)
     parser.add_argument('--transition_matrix_path', help='The directory of transition matrix', type=str, default=None)
     args = parser.parse_args()
 
@@ -19,6 +20,7 @@ if __name__ == '__main__':
     o_dir = args.output_dir
     model_name = args.model_name
     transition_matrix_path = args.transition_matrix_path
+    n_factor = args.n_factor
 
     train_data_path = data_dir+'train_lines.txt'
     train_instances = FMC_utils.read_instances_lines_from_file(train_data_path)
@@ -44,11 +46,11 @@ if __name__ == '__main__':
         sp.save_npz(saved_file, transition_matrix)
     else:
         transition_matrix = sp.load_npz(transition_matrix_path)
-    W, H, n_iter = non_negative_factorization(transition_matrix, n_components=64, init='random', random_state=0,
+    W, H, n_iter = non_negative_factorization(transition_matrix, n_components=n_factor, init='random', random_state=0,
                                               solver='mu', beta_loss='kullback-leibler', max_iter=300)
     # np.savez(o_dir+'W_matrix_64_factor.npz', W_matrix=W)
     # np.savez(o_dir+'H_matrix_64_factor.npz', H_matrix=H)
-    fmc_model = FMC(item_dict, reversed_item_dict, item_freq_dict)
+    fmc_model = FMC(item_dict, reversed_item_dict, item_freq_dict, n_factor)
     fmc_model.W = W
     fmc_model.H = H
     fmc_model.save(o_dir+'W_H')
