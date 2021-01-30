@@ -94,6 +94,22 @@ class FPMC():
         # find top k according to output
         return np.array(list_recall).mean()
 
+    def compute_hitrate(self, data_list, topk=10):
+        hit = 0
+        for u, b_tm1, target_basket in data_list:
+            # find top k according to output
+            idx = self.top_k_recommendations((u, b_tm1, target_basket), topk)
+            correct_set = set(idx).intersection(set(target_basket))
+            # for item in correct_set:
+            #     print(self.reversed_item_dict[item], ' ')
+            correct = len(correct_set)
+            # print()
+            # list_recall.append(correct / len(target_basket))
+
+            if correct > 0:
+                hit += 1
+        return hit / len(data_list)
+
     def evaluation(self, data_list, topk):
         recall = self.compute_recall(data_list, topk)
         return recall
