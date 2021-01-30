@@ -40,10 +40,10 @@ class FMC():
         self.H = f['H']
 
     def top_predicted_item(self, previous_basket, topk):
-        candidate = np.zeros(self.nb_items)
+        candidate = np.zeros(self.n_item)
         prev_basket_idx = [self.item_dict[item] for item in previous_basket]
         # for item_idx in prev_basket_idx:
-        for i in range(self.nb_items):
+        for i in range(self.n_item):
             candidate[i] = np.matmul(self.W[prev_basket_idx,:], self.H[:,i]).mean(axis=0)
         topk_idx = np.argpartition(candidate, -topk)[-topk:]
         topk_item = [self.reversed_item_dict[item] for item in topk_idx]
