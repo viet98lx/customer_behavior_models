@@ -51,16 +51,23 @@ if __name__ == '__main__':
         ex_instances = FMC_utils.read_instances_lines_from_file(ex_file)
     else :
         ex_instances = test_instances
-    for i in random.sample(ex_instances, nb_predict):
-        elements = i.split('|')
-        b_seq = elements[1:]
-        prev_basket = [item for item in re.split('[\\s]+',b_seq[-2].strip())]
-        target_basket = [item for item in re.split('[\\s]+',b_seq[-1].strip())]
-        topk_item = fmc_model.top_predicted_item(prev_basket, topk)
-        correct_set = set(topk_item).intersection(set(target_basket))
-        print("Input basket: ", prev_basket)
-        print("Ground truth: ", target_basket)
-        print("Nb_correct: ", len(correct_set))
-        print("Predict topk: ", topk_item)
-        print("Items correct: ", list(correct_set))
-        print()
+    for topk in [5, 10, 15]:
+        print("Top : ", topk)
+        hit_rate = FMC_utils.FMC_hit_ratio(test_instances, topk, fmc_model)
+        recall = FMC_utils.FMC_recall(test_instances, topk, fmc_model)
+        print("hit ratio: ", hit_rate)
+        print("recall: ", recall)
+
+    # for i in random.sample(ex_instances, nb_predict):
+    #     elements = i.split('|')
+    #     b_seq = elements[1:]
+    #     prev_basket = [item for item in re.split('[\\s]+',b_seq[-2].strip())]
+    #     target_basket = [item for item in re.split('[\\s]+',b_seq[-1].strip())]
+    #     topk_item = fmc_model.top_predicted_item(prev_basket, topk)
+    #     correct_set = set(topk_item).intersection(set(target_basket))
+    #     print("Input basket: ", prev_basket)
+    #     print("Ground truth: ", target_basket)
+    #     print("Nb_correct: ", len(correct_set))
+    #     print("Predict topk: ", topk_item)
+    #     print("Items correct: ", list(correct_set))
+    #     print()
