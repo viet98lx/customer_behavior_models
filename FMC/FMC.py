@@ -1,13 +1,14 @@
 import pickle
 import numpy as np
 class FMC():
-    def __init__(self, item_dict, reversed_item_dict, item_freq_dict, n_factor):
+    def __init__(self, item_dict, reversed_item_dict, item_freq_dict, n_factor, mc_order):
         self.item_freq_dict = item_freq_dict
         self.item_dict = item_dict
         self.reversed_item_dict = reversed_item_dict
 
         self.item_set = set(item_dict.values())
         self.n_item = len(item_dict)
+        self.mc_order = mc_order
 
         self.n_factor = n_factor
         self.W = None

@@ -3,17 +3,20 @@ import scipy.sparse as sp
 import re
 import numpy as np
 
-def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict):
+def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict, mc_order):
   pair_dict = dict()
   NB_ITEMS = len(item_dict)
   for line in train_instances:
       elements = line.split("|")
       user = elements[0]
       basket_seq = elements[1:]
-      for i in range(1,len(basket_seq)):
-        prev_basket = basket_seq[i-1]
+      for i in range(mc_order,len(basket_seq)):
+        prev_baskets = basket_seq[:i]
         cur_basket = basket_seq[i]
-        prev_item_list = re.split('[\\s]+', prev_basket.strip())
+        # prev_item_list = re.split('[\\s]+', prev_basket.strip())
+        prev_item_list = []
+        for basket in prev_baskets:
+            prev_item_list += re.split('[\\s]+', basket.strip())
         cur_item_list = re.split('[\\s]+', cur_basket.strip())
         prev_item_idx = [item_dict[item] for item in prev_item_list]
         cur_item_idx = [item_dict[item] for item in cur_item_list]
@@ -88,9 +91,12 @@ def FMC_hit_ratio(test_instances, topk, FMC_model):
         #     user_dict[user] = len(user_dict)
         basket_seq = elements[1:]
         last_basket = basket_seq[-1]
-        prev_basket = basket_seq[-2]
-        prev_item_idx = re.split('[\\s]+', prev_basket.strip())
-        list_predict_item = FMC_model.top_predicted_item(prev_item_idx, topk)
+        # prev_basket = basket_seq[-2]
+        # prev_item_idx = re.split('[\\s]+', prev_basket.strip())
+        prev_item = []
+        for prev_basket in basket_seq[:-1]:
+            prev_item += re.split('[\\s]+', prev_basket.strip())
+        list_predict_item = FMC_model.top_predicted_item(prev_item, topk)
         item_list = re.split('[\\s]+', last_basket.strip())
         num_correct = len(set(item_list).intersection(list_predict_item))
         if num_correct > 0 :
@@ -108,9 +114,12 @@ def FMC_recall(test_instances, topk, FMC_model):
         user = elements[0]
         basket_seq = elements[1:]
         last_basket = basket_seq[-1]
-        prev_basket = basket_seq[-2]
-        prev_item_idx = re.split('[\\s]+', prev_basket.strip())
-        list_predict_item = FMC_model.top_predicted_item(prev_item_idx, topk)
+        # prev_basket = basket_seq[-2]
+        # prev_item_idx = re.split('[\\s]+', prev_basket.strip())
+        prev_item = []
+        for prev_basket in basket_seq[:-1]:
+            prev_item += re.split('[\\s]+', prev_basket.strip())
+        list_predict_item = FMC_model.top_predicted_item(prev_item, topk)
         item_list = re.split('[\\s]+', last_basket.strip())
         num_correct = len(set(item_list).intersection(list_predict_item))
         # total_correct += num_correct

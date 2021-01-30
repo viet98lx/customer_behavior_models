@@ -14,6 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', help='Model name ', type=str, default='fpmc')
     parser.add_argument('--nb_predict', help='# of predict', type=int, default=10)
     parser.add_argument('--topk', help='# of predict', type=int, default=10)
+    parser.add_argument('--mc_order', help='Markov order', type=int, default=1)
     parser.add_argument('--example_file', help='Example_file', type=str, default=None)
     args = parser.parse_args()
 
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     nb_predict = args.nb_predict
     topk = args.topk
     ex_file = args.example_file
+    mc_order = args.mc_order
 
     data_dir = f_dir
     train_data_path = data_dir + 'train_lines.txt'
@@ -42,7 +44,7 @@ if __name__ == '__main__':
     saved_file = os.path.join(o_dir, 'transition_matrix_MC.npz')
     # print("Save model in ", saved_file)
     transition_matrix = sp.load_npz(saved_file)
-    mc_model = MarkovChain(item_dict, reversed_item_dict, item_freq_dict, transition_matrix)
+    mc_model = MarkovChain(item_dict, reversed_item_dict, item_freq_dict, transition_matrix, mc_order)
 
     if ex_file is not None:
         ex_instances = MC_utils.read_instances_lines_from_file(ex_file)
@@ -51,11 +53,14 @@ if __name__ == '__main__':
     for i in random.sample(ex_instances, nb_predict):
         elements = i.split('|')
         b_seq = elements[1:]
-        prev_basket = [item for item in re.split('[\\s]+',b_seq[-2].strip())]
+        # prev_basket = [item for item in re.split('[\\s]+',b_seq[-2].strip())]
+        prev_item = []
+        for prev_basket in b_seq[:-1]:
+            prev_item += re.split('[\\s]+', prev_basket.strip())
         target_basket = [item for item in re.split('[\\s]+',b_seq[-1].strip())]
-        topk_item = mc_model.top_predicted_item(prev_basket, topk)
+        topk_item = mc_model.top_predicted_item(prev_item, topk)
         correct_set = set(topk_item).intersection(set(target_basket))
-        print("Input basket: ", prev_basket)
+        print("Input basket: ", prev_item)
         print("Ground truth: ", target_basket)
         print("Nb_correct: ", len(correct_set))
         print("Predict topk: ", topk_item)

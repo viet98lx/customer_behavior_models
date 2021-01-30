@@ -3,17 +3,20 @@ import scipy.sparse as sp
 import re
 import numpy as np
 
-def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict):
+def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict, mc_order):
   pair_dict = dict()
   NB_ITEMS = len(item_dict)
   for line in train_instances:
       elements = line.split("|")
       user = elements[0]
       basket_seq = elements[1:]
-      for i in range(1,len(basket_seq)):
-        prev_basket = basket_seq[i-1]
+      for i in range(mc_order,len(basket_seq)):
+        prev_baskets = basket_seq[:i]
         cur_basket = basket_seq[i]
-        prev_item_list = re.split('[\\s]+', prev_basket.strip())
+        # prev_item_list = re.split('[\\s]+', prev_basket.strip())
+        prev_item_list = []
+        for basket in prev_baskets:
+            prev_item_list += re.split('[\\s]+', basket.strip())
         cur_item_list = re.split('[\\s]+', cur_basket.strip())
         prev_item_idx = [item_dict[item] for item in prev_item_list]
         cur_item_idx = [item_dict[item] for item in cur_item_list]
