@@ -37,7 +37,9 @@ class FMC():
         '''
         f = np.load(filename)
         self.W = f['W']
+        print(self.W.shape)
         self.H = f['H']
+        print(self.H.shape)
 
     def top_predicted_item(self, previous_basket, topk):
         candidate = np.zeros(self.n_item)
