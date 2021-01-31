@@ -50,6 +50,8 @@ if __name__ == '__main__':
         sp.save_npz(saved_file, transition_matrix)
     else:
         transition_matrix = sp.load_npz(transition_matrix_path)
+    if not os.path.exists(o_dir):
+        os.makedirs(o_dir)
     W, H, n_iter = non_negative_factorization(transition_matrix, n_components=n_factor, init='random', random_state=0,
                                               solver='mu', beta_loss='kullback-leibler', max_iter=max_iter)
     # np.savez(o_dir+'W_matrix_64_factor.npz', W_matrix=W)
