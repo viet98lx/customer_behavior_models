@@ -14,6 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', help='Model name ', type=str, default='fpmc')
     parser.add_argument('--n_factor', help='# of factor', type=int, default=4)
     parser.add_argument('--mc_order', help='Markov order', type=int, default=1)
+    parser.add_argument('--max_iter', help='max iter of factorization', type=int, default=300)
     parser.add_argument('--transition_matrix_path', help='The directory of transition matrix', type=str, default=None)
     args = parser.parse_args()
 
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     transition_matrix_path = args.transition_matrix_path
     n_factor = args.n_factor
     mc_order = args.mc_order
+    max_iter = args.max_iter
 
     train_data_path = data_dir+'train_lines.txt'
     train_instances = FMC_utils.read_instances_lines_from_file(train_data_path)
@@ -49,9 +51,10 @@ if __name__ == '__main__':
     else:
         transition_matrix = sp.load_npz(transition_matrix_path)
     W, H, n_iter = non_negative_factorization(transition_matrix, n_components=n_factor, init='random', random_state=0,
-                                              solver='mu', beta_loss='kullback-leibler', max_iter=300)
+                                              solver='mu', beta_loss='kullback-leibler', max_iter=max_iter)
     # np.savez(o_dir+'W_matrix_64_factor.npz', W_matrix=W)
     # np.savez(o_dir+'H_matrix_64_factor.npz', H_matrix=H)
+    print("n_iter: ", n_iter)
     fmc_model = FMC(item_dict, reversed_item_dict, item_freq_dict, n_factor, mc_order)
     fmc_model.W = W
     fmc_model.H = H
