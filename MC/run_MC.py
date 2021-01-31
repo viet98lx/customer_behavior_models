@@ -82,7 +82,7 @@ if __name__ == '__main__':
     transition_matrix = MC_utils.calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict, mc_order)
     sp_matrix_path = model_name+'_transition_matrix_MC.npz'
     nb_item = len(item_dict)
-    print('ensity : %.6f' % (transition_matrix.nnz * 1.0 / nb_item / nb_))
+    print('ensity : %.6f' % (transition_matrix.nnz * 1.0 / nb_item / nb_item))
     if not os.path.exists(o_dir):
         os.makedirs(o_dir)
     saved_file = os.path.join(o_dir, sp_matrix_path)
