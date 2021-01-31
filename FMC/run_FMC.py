@@ -42,7 +42,7 @@ if __name__ == '__main__':
     MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = FMC_utils.build_knowledge(train_instances+test_instances)
     if transition_matrix_path is None:
         transition_matrix = FMC_utils.calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict)
-        sp_matrix_path = 'transition_matrix_MC.npz'
+        sp_matrix_path = model_name+'_transition_matrix_MC.npz'
         if not os.path.exists(o_dir):
             os.makedirs(o_dir)
         saved_file = os.path.join(o_dir, sp_matrix_path)
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     fmc_model = FMC(item_dict, reversed_item_dict, item_freq_dict, n_factor, mc_order)
     fmc_model.W = W
     fmc_model.H = H
-    fmc_model.save(o_dir+'W_H')
+    fmc_model.save(os.path.join(o_dir,model_name+'_W_H'))
     for topk in [5, 10, 15]:
         print("Top : ", topk)
         hit_rate = FMC_utils.FMC_hit_ratio(test_instances, topk, fmc_model)

@@ -56,5 +56,5 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(fpmc.parameters(), lr=learn_rate)
     if not os.path.exists(o_dir):
         os.makedirs(o_dir)
-    fpmc_pytorch_utils.learnSBPR_FPMC(fpmc, o_dir+model_name, optimizer, train_data_list, test_data_list, n_epoch=epoch,
+    fpmc_pytorch_utils.learnSBPR_FPMC(fpmc, os.path.join(o_dir,model_name), optimizer, train_data_list, test_data_list, n_epoch=epoch,
                    neg_batch_size=n_neg, eval_per_epoch=True)
