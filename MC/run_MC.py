@@ -80,7 +80,9 @@ if __name__ == '__main__':
     print("---------------------@Build knowledge-------------------------------")
     MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = MC_utils.build_knowledge(train_instances+test_instances)
     transition_matrix = MC_utils.calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict, mc_order)
-    sp_matrix_path = 'transition_matrix_MC.npz'
+    sp_matrix_path = model_name+'_transition_matrix_MC.npz'
+    nb_item = len(item_dict)
+    print('ensity : %.6f' % (transition_matrix.nnz * 1.0 / nb_item / nb_))
     if not os.path.exists(o_dir):
         os.makedirs(o_dir)
     saved_file = os.path.join(o_dir, sp_matrix_path)
