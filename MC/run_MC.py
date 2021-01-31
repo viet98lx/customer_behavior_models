@@ -78,7 +78,7 @@ if __name__ == '__main__':
     ### build knowledge ###
     # common_instances = train_instances + test_instances
     print("---------------------@Build knowledge-------------------------------")
-    MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = MC_utils.build_knowledge(train_instances)
+    MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = MC_utils.build_knowledge(train_instances+test_instances)
     transition_matrix = MC_utils.calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reversed_item_dict, mc_order)
     sp_matrix_path = 'transition_matrix_MC.npz'
     if not os.path.exists(o_dir):
