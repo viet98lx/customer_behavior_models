@@ -37,7 +37,7 @@ if __name__ == '__main__':
     nb_test = len(test_instances)
     # print(nb_test)
     print("---------------------@Build knowledge-------------------------------")
-    MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = MC_utils.build_knowledge(train_instances+test_)
+    MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = MC_utils.build_knowledge(train_instances+test_instances)
 
     if not os.path.exists(o_dir):
         os.makedirs(o_dir)
