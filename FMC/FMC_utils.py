@@ -80,50 +80,56 @@ def read_instances_lines_from_file(file_path):
         lines = [line.rstrip('\n') for line in f]
         return lines
 
-def FMC_hit_ratio(test_instances, topk, FMC_model):
-    hit_count = 0
-    # user_correct = set()
-    # user_dict = dict()
-    for line in test_instances:
-        elements = line.split("|")
-        # user = elements[0]
-        # if user not in user_dict:
-        #     user_dict[user] = len(user_dict)
-        basket_seq = elements[1:]
-        last_basket = basket_seq[-1]
-        # prev_basket = basket_seq[-2]
-        # prev_item_idx = re.split('[\\s]+', prev_basket.strip())
-        prev_item = []
-        for prev_basket in basket_seq[:-1]:
-            prev_item += re.split('[\\s]+', prev_basket.strip())
-        list_predict_item = FMC_model.top_predicted_item(prev_item, topk)
-        item_list = re.split('[\\s]+', last_basket.strip())
-        num_correct = len(set(item_list).intersection(list_predict_item))
-        if num_correct > 0 :
-            hit_count += 1
-            # user_correct.add(user)
-    return hit_count / len(test_instances)
-
-
-def FMC_recall(test_instances, topk, FMC_model):
-    list_recall = []
-    # total_correct = 0
-    # total_user_correct = 0
+def write_predict(file_name, test_instances, topk, MC_model):
+    f = open(file_name, 'w')
     for line in test_instances:
         elements = line.split("|")
         user = elements[0]
-        basket_seq = elements[1:]
+        basket_seq = elements[-MC_model.mc_order-1:-1]
         last_basket = basket_seq[-1]
         # prev_basket = basket_seq[-2]
-        # prev_item_idx = re.split('[\\s]+', prev_basket.strip())
-        prev_item = []
-        for prev_basket in basket_seq[:-1]:
-            prev_item += re.split('[\\s]+', prev_basket.strip())
-        list_predict_item = FMC_model.top_predicted_item(prev_item, topk)
-        item_list = re.split('[\\s]+', last_basket.strip())
-        num_correct = len(set(item_list).intersection(list_predict_item))
-        # total_correct += num_correct
-        # if num_correct > 0:
-        #   total_user_correct += 1
-        list_recall.append(num_correct / len(item_list))
+        prev_item_list = []
+        for basket in basket_seq:
+            prev_item_list += [p for p in re.split('[\\s]+', basket.strip())]
+        list_predict_item = MC_model.top_predicted_item(prev_item_list, topk)
+        # item_list = re.split('[\\s]+', last_basket.strip())
+        cur_item_list = [p for p in re.split('[\\s]+', last_basket.strip())]
+        f.write(str(user)+'\n')
+        f.write('ground_truth:')
+        for item in cur_item_list:
+            f.write(' '+str(item))
+        f.write('\n')
+        f.write('predicted:')
+        predict_len = len(list_predict_item)
+        for i in range(predict_len):
+            f.write(' '+str(list_predict_item[predict_len-1-i]))
+        f.write('\n')
+    f.close()
+
+def read_predict(file_name):
+    f = open(file_name, 'r')
+    lines = f.readlines()
+    list_ground_truth_basket = []
+    list_predict_basket = []
+    for i in range(0, len(lines), 3):
+        user = lines[i].strip('\n')
+        list_ground_truth_basket.append(re.split('[\\s]+',lines[i+1].strip('\n'))[1:])
+        list_predict_basket.append(re.split('[\\s]+',lines[i+2].strip('\n'))[1:])
+
+    return list_ground_truth_basket, list_predict_basket
+
+def hit_ratio(list_ground_truth_basket, list_predict_basket, topk):
+    hit_count = 0
+    for gt, predict in zip(list_ground_truth_basket, list_predict_basket):
+        num_correct = len(set(gt).intersection(predict[:topk]))
+        if num_correct > 0:
+            hit_count += 1
+            # user_correct.add(user)
+    return hit_count / len(list_ground_truth_basket)
+
+def recall(list_ground_truth_basket, list_predict_basket, topk):
+    list_recall = []
+    for gt, predict in zip(list_ground_truth_basket, list_predict_basket):
+        num_correct = len(set(gt).intersection(predict[:topk]))
+        list_recall.append(num_correct / len(gt))
     return np.array(list_recall).mean()

@@ -46,7 +46,8 @@ class FMC():
         # for i in range(self.n_item):
         candidate = np.matmul(self.W[prev_basket_idx,:], self.H).mean(axis=0)
         topk_idx = np.argpartition(candidate, -topk)[-topk:]
-        topk_item = [self.reversed_item_dict[item] for item in topk_idx]
+        sorted_topk_idx = topk_idx[np.argsort(candidate[topk_idx])]
+        topk_item = [self.reversed_item_dict[item] for item in sorted_topk_idx]
         # print("Done")
         return topk_item
     # def init_model(self, std=0.01):

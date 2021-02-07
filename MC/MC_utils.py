@@ -79,3 +79,57 @@ def read_instances_lines_from_file(file_path):
     with open(file_path, "r") as f:
         lines = [line.rstrip('\n') for line in f]
         return lines
+
+def write_predict(file_name, test_instances, topk, MC_model):
+    f = open(file_name, 'w')
+    for line in test_instances:
+        elements = line.split("|")
+        user = elements[0]
+        basket_seq = elements[-MC_model.mc_order-1:-1]
+        last_basket = basket_seq[-1]
+        # prev_basket = basket_seq[-2]
+        prev_item_list = []
+        for basket in basket_seq:
+            prev_item_list += [p for p in re.split('[\\s]+', basket.strip())]
+        list_predict_item = MC_model.top_predicted_item(prev_item_list, topk)
+        # item_list = re.split('[\\s]+', last_basket.strip())
+        cur_item_list = [p for p in re.split('[\\s]+', last_basket.strip())]
+        f.write(str(user)+'\n')
+        f.write('ground_truth:')
+        for item in cur_item_list:
+            f.write(' '+str(item))
+        f.write('\n')
+        f.write('predicted:')
+        predict_len = len(list_predict_item)
+        for i in range(predict_len):
+            f.write(' '+str(list_predict_item[predict_len-1-i]))
+        f.write('\n')
+    f.close()
+
+def read_predict(file_name):
+    f = open(file_name, 'r')
+    lines = f.readlines()
+    list_ground_truth_basket = []
+    list_predict_basket = []
+    for i in range(0, len(lines), 3):
+        user = lines[i].strip('\n')
+        list_ground_truth_basket.append(re.split('[\\s]+',lines[i+1].strip('\n'))[1:])
+        list_predict_basket.append(re.split('[\\s]+',lines[i+2].strip('\n'))[1:])
+
+    return list_ground_truth_basket, list_predict_basket
+
+def hit_ratio(list_ground_truth_basket, list_predict_basket, topk):
+    hit_count = 0
+    for gt, predict in zip(list_ground_truth_basket, list_predict_basket):
+        num_correct = len(set(gt).intersection(predict[:topk]))
+        if num_correct > 0:
+            hit_count += 1
+            # user_correct.add(user)
+    return hit_count / len(list_ground_truth_basket)
+
+def recall(list_ground_truth_basket, list_predict_basket, topk):
+    list_recall = []
+    for gt, predict in zip(list_ground_truth_basket, list_predict_basket):
+        num_correct = len(set(gt).intersection(predict[:topk]))
+        list_recall.append(num_correct / len(gt))
+    return np.array(list_recall).mean()
