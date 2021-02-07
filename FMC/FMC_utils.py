@@ -11,7 +11,8 @@ def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reve
       user = elements[0]
       basket_seq = elements[1:]
       for i in range(mc_order,len(basket_seq)):
-        prev_baskets = basket_seq[:i]
+        # prev_baskets = basket_seq[:i]
+        prev_baskets = basket_seq[i - mc_order: i]
         cur_basket = basket_seq[i]
         # prev_item_list = re.split('[\\s]+', prev_basket.strip())
         prev_item_list = []
