@@ -58,12 +58,14 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir', help='The directory of output', type=str, default='../saved_models/')
     parser.add_argument('--model_name', help='Model name ', type=str, default='mc')
     parser.add_argument('--mc_order', help='Markov order', type=int, default=1)
+    parser.add_argument('--toy_split', help='toy split ratio', type=float, default=1)
     args = parser.parse_args()
 
     data_dir = args.input_dir
     o_dir = args.output_dir
     model_name = args.model_name
     mc_order = args.mc_order
+    toy_ratio = args.toy_split
 
     train_data_path = data_dir+'train_lines.txt'
     train_instances = MC_utils.read_instances_lines_from_file(train_data_path)
@@ -74,6 +76,12 @@ if __name__ == '__main__':
     test_instances = MC_utils.read_instances_lines_from_file(test_data_path)
     nb_test = len(test_instances)
     print(nb_test)
+
+    split_train = int(toy_ratio * nb_train)
+    # split_test = int(0.5*nb_test)
+
+    train_instances = train_instances[:split_train]
+    # test_instances = test_instances[:split_test]
 
     ### build knowledge ###
     # common_instances = train_instances + test_instances
