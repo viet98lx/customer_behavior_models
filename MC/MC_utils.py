@@ -10,21 +10,23 @@ def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reve
       elements = line.split("|")
       user = elements[0]
       basket_seq = elements[1:]
-      for i in range(mc_order,len(basket_seq)):
-        prev_baskets = basket_seq[:i]
-        cur_basket = basket_seq[i]
-        # prev_item_list = re.split('[\\s]+', prev_basket.strip())
-        prev_item_list = []
-        for basket in prev_baskets:
+      st = mc_order
+      if len(basket_seq) < mc_order + 1:
+          st = 1
+      for i in range(st, len(basket_seq)):
+          prev_baskets = basket_seq[i - st:i]
+          cur_basket = basket_seq[i]
+          prev_item_list = []
+          for basket in prev_baskets:
             prev_item_list += re.split('[\\s]+', basket.strip())
-        cur_item_list = re.split('[\\s]+', cur_basket.strip())
-        prev_item_idx = [item_dict[item] for item in prev_item_list]
-        cur_item_idx = [item_dict[item] for item in cur_item_list]
-        for t in list(itertools.product(prev_item_idx, cur_item_idx)):
+          cur_item_list = re.split('[\\s]+', cur_basket.strip())
+          prev_item_idx = [item_dict[item] for item in prev_item_list]
+          cur_item_idx = [item_dict[item] for item in cur_item_list]
+          for t in list(itertools.product(prev_item_idx, cur_item_idx)):
             if t in pair_dict.keys():
-              pair_dict[t] += 1
+                pair_dict[t] += 1
             else:
-              pair_dict[t] = 1
+                pair_dict[t] = 1
 
   for key in pair_dict.keys():
     pair_dict[key] /= item_freq_dict[reversed_item_dict[key[0]]]
