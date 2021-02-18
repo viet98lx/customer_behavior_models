@@ -23,7 +23,7 @@ def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reve
           prev_item_idx = [item_dict[item] for item in prev_item_list]
           cur_item_idx = [item_dict[item] for item in cur_item_list]
           for t in list(itertools.product(prev_item_idx, cur_item_idx)):
-            if t in pair_dict.keys():
+            if t in pair_dict:
                 pair_dict[t] += 1
             else:
                 pair_dict[t] = 1
