@@ -34,7 +34,7 @@ def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reve
   row = [p[0] for p in pair_dict]
   col = [p[1] for p in pair_dict]
   data = [pair_dict[p] for p in pair_dict]
-  transition_matrix = sp.csr_matrix((data, (row, col)), shape=(NB_ITEMS, NB_ITEMS), dtype="float32")
+  transition_matrix = sp.csr_matrix((data, (row, col)), shape=(NB_ITEMS, NB_ITEMS), dtype="numpy.float32")
   nb_nonzero = len(pair_dict)
   density = nb_nonzero * 1.0 / NB_ITEMS / NB_ITEMS
   print("Density of matrix: {:.6f}".format(density))
