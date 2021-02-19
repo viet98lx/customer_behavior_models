@@ -9,7 +9,7 @@ class MarkovChain():
     self.nb_items = len(item_dict)
     # self.sp_matrix_path = sp_matrix_path
     self.mc_order = mc_order
-    self.transition_matrix = transition_matrix
+    self.transition_matrix = transition_matrix.astype(np.float32)
 
   def top_predicted_item(self, previous_basket, topk):
     candidate = np.zeros(self.nb_items)

@@ -49,7 +49,7 @@ if __name__ == '__main__':
         print("Save model in ", saved_file)
         sp.save_npz(saved_file, transition_matrix)
     else:
-        transition_matrix = sp.load_npz(transition_matrix_path)
+        transition_matrix = sp.load_npz(transition_matrix_path).astype(np.float32)
     if not os.path.exists(o_dir):
         os.makedirs(o_dir)
     W, H, n_iter = non_negative_factorization(transition_matrix, n_components=n_factor, init='random', random_state=0,
