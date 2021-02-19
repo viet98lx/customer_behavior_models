@@ -28,7 +28,7 @@ def calculate_transition_matrix(train_instances, item_dict, item_freq_dict, reve
             else:
                 pair_dict[t] = 1
 
-  for key in pair_dict.keys():
+  for key in pair_dict:
     pair_dict[key] /= item_freq_dict[reversed_item_dict[key[0]]]
 
   row = [p[0] for p in pair_dict]
