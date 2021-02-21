@@ -87,9 +87,11 @@ def write_predict(file_name, test_instances, topk, MC_model):
     for line in test_instances:
         elements = line.split("|")
         user = elements[0]
-        basket_seq = elements[-MC_model.mc_order-1:-1]
+        if len(elements[1:]) < MC_model.mc_order + 1:
+            basket_seq = elements[1:-1]
+        else:
+            basket_seq = elements[-MC_model.mc_order - 1:-1]
         last_basket = basket_seq[-1]
-        # prev_basket = basket_seq[-2]
         prev_item_list = []
         for basket in basket_seq:
             prev_item_list += [p for p in re.split('[\\s]+', basket.strip())]
