@@ -36,8 +36,8 @@ if __name__ == '__main__':
     train_instances, test_instances = fpmc_pytorch_utils.load_data_from_dir(data_dir)
     if toy_split < 1:
         train_split = int(toy_split*len(train_instances))
-        test_split = int(toy_split*len(test_instances))
-        train_instances, test_instances = train_instances[:train_split], test_instances[:test_split]
+        # test_split = int(toy_split*len(test_instances))
+        train_instances = train_instances[:train_split]
 
     print("---------------------@Build knowledge-------------------------------")
     MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs, item_freq_dict, user_dict = fpmc_pytorch_utils.build_knowledge(train_instances + test_instances)
