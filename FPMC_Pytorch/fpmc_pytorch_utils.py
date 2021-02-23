@@ -126,11 +126,11 @@ def learnSBPR_FPMC(model, model_name, optimizer, tr_data, te_data=None, n_epoch=
               recall_train = model.evaluation(tr_data, 10)
               print("Recall train: ", recall_train)
               print("Recall test: ", recall_test)
-              save_model(model,model_name+'_best_model.pt')
 
             if (recall_test > max_recall):
               print("Recall increase from %.6f to %.6f" % (max_recall, recall_test))
               max_recall = recall_test
+              save_model(model, model_name + '_best_model.pt')
               # filename = 'best_epoch_'+str(epoch)+'.npz'
               # self.save(filename)
             print('epoch %d done' % epoch)
