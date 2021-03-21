@@ -99,11 +99,6 @@ def learn_epoch(model, optimizer, tr_data, neg_batch_size):
         i = target_basket[0]
         for j in j_list:
             loss = model(u, i, j, b_tm1)
-            # avg_loss += loss
-            # loss.backward()
-            # optimizer.step()
-            # loss_iter += loss.detach().item()
-            # print(loss)
             avg_loss += loss
         mean_loss = avg_loss / neg_batch_size
         mean_loss.backward()
