@@ -91,7 +91,7 @@ def write_predict(file_name, test_instances, topk, MC_model):
             basket_seq = elements[1:-1]
         else:
             basket_seq = elements[-MC_model.mc_order - 1:-1]
-        last_basket = basket_seq[-1]
+        last_basket = elements[-1]
         prev_item_list = []
         for basket in basket_seq:
             prev_item_list += [p for p in re.split('[\\s]+', basket.strip())]
