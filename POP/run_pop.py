@@ -113,7 +113,7 @@ if __name__ == '__main__':
     saved_file = os.path.join(o_dir, model_name)
     print("Save model in ", saved_file)
     np.savez(saved_file, item_probs= pop_model.list_pop)
-    for topk in [5,10,15]:
+    for topk in [5,10,15, 20]:
         print("Top : ", topk)
         hit_rate = POP_hit_ratio(test_instances, topk, pop_model)
         recall = POP_recall(test_instances, topk, pop_model)
